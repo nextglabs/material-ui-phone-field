@@ -1,0 +1,104 @@
+{
+	"parser": "@typescript-eslint/parser",
+	"extends": [
+		"eslint:recommended",
+		"plugin:@typescript-eslint/eslint-recommended",
+		"plugin:@typescript-eslint/recommended"
+	],
+	"env": {
+		"es6": true,
+		"browser": true
+	},
+	"settings": {
+		"react": {
+			"createClass": "createReactClass",
+			"pragma": "React",
+			"version": "16.13.1"
+		}
+	},
+	"overrides": [
+		{
+			"files": ["**/__tests__/**", "scripts/**", "**/__testfixtures__/**", "**/*.test.*", "**/*.spec.*"],
+			"rules": {
+				"@typescript-eslint/no-empty-function": "off",
+				"import/no-extraneous-dependencies": "off"
+			}
+		},
+		{
+			"files": ["**/__testfixtures__/**"],
+			"rules": {
+				"react/forbid-prop-types": "off",
+				"react/no-unused-prop-types": "off",
+				"react/require-default-props": "off"
+			}
+		},
+		{ "files": "**/.storybook/config.js", "rules": { "global-require": "off" } },
+		{ "files": "cypress/**", "rules": { "jest/expect-expect": "off" } },
+		{
+			"files": ["**/*.stories.*"],
+			"rules": {
+				"no-console": "off"
+			}
+		},
+		{
+			"files": ["**/*.tsx", "**/*.ts"],
+			"rules": {
+				"react/prop-types": "off", // we should use types
+				"no-dupe-class-members": "off" // this is called overloads in typescript
+			}
+		},
+		{
+			"files": ["**/*.d.ts"],
+			"rules": {
+				"vars-on-top": "off",
+				"no-var": "off", // this is how typescript works
+				"spaced-comment": "off"
+			}
+		}
+	],
+	"rules": {
+		"react/react-in-jsx-scope": 0,
+		"react/display-name": 0,
+		"react/prop-types": 0,
+		"brace-style": ["warn", "stroustrup", { "allowSingleLine": false }],
+		"comma-dangle": ["warn", "always-multiline"],
+		"comma-spacing": ["warn", { "before": false, "after": true }],
+		"comma-style": ["error", "last"],
+		"indent": ["error", "tab", { "SwitchCase": 1 }],
+		"no-restricted-imports": [
+			"error",
+			{
+				"paths": [
+					{
+						"name": "@material-ui/core",
+						"importNames": ["makeStyles", "createMuiTheme"],
+						"message": "Please import from @material-ui/core/styles instead. See https://material-ui.com/guides/minimizing-bundle-size/#option-2 for more information"
+					}
+				]
+			}
+		],
+		"quotes": [2, "double", { "avoidEscape": true }],
+		"semi": ["warn", "always"],
+		"@typescript-eslint/ban-ts-comment": 0,
+		"@typescript-eslint/explicit-function-return-type": 0,
+		"@typescript-eslint/explicit-member-accessibility": 0,
+		"@typescript-eslint/explicit-module-boundary-types": 0,
+		"@typescript-eslint/indent": 0,
+		"@typescript-eslint/member-delimiter-style": 0,
+		"@typescript-eslint/no-explicit-any": 0,
+		"@typescript-eslint/no-var-requires": 0,
+		"@typescript-eslint/no-use-before-define": 0,
+		"@typescript-eslint/no-unused-vars": [
+			2,
+			{
+				"argsIgnorePattern": "^_|theme"
+			}
+		],
+		"no-console": [
+			2,
+			{
+				"allow": ["warn", "error"]
+			}
+		]
+	}
+}

@@ -1,0 +1,26 @@
+{
+	"compilerOptions": {
+		"declaration": true,
+		"jsx": "react",
+		"outDir": "./dist",
+		"target": "es2015",
+	    "lib": ["ES2018", "dom"],
+		"module": "esnext",
+		"moduleResolution": "node",
+		"strict": true,
+		"esModuleInterop": true,
+		"skipLibCheck": true,
+		"noImplicitAny": true,
+		"removeComments": true
+	},
+	"exclude": [
+		"**/dist",
+		"**/*.spec.*",
+		"**/*.test.*",
+		"**/*.stories.*",
+		"src/stories/**/*",
+		"src/documentation/**/*",
+		"src/setupTests.ts"
+	],
+	"include": ["src/**/*"]
+}

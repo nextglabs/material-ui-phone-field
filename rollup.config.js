@@ -1,5 +1,6 @@
 import typescript from "rollup-plugin-typescript2";
 import strip from "@rollup/plugin-strip";
+import sass from "rollup-plugin-sass";
 
 import pkg from "./package.json";
 
@@ -10,7 +11,7 @@ export default [
 			{ file: pkg.main, format: "cjs" },
 			{ file: pkg.module, format: "esm" },
 		],
-		plugins: [strip(), typescript({ tsconfig: "tsconfig.json" })],
+		plugins: [sass(), strip(), typescript({ tsconfig: "tsconfig.json" })],
 		external: Object.keys(pkg.peerDependencies || {}),
 	},
 ];

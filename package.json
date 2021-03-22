@@ -54,6 +54,9 @@
   "devDependencies": {
     "@material-ui/core": "^4.11.3",
     "@rollup/plugin-strip": "^2.0.0",
+    "@testing-library/jest-dom": "^5.11.9",
+    "@testing-library/react": "^11.2.5",
+    "@testing-library/user-event": "^13.0.7",
     "@types/react": "^17.0.3",
     "@types/react-dom": "^17.0.2",
     "@typescript-eslint/eslint-plugin": "^4.18.0",
@@ -65,6 +68,8 @@
     "generate-changelog": "^1.8.0",
     "jest": "^26.6.3",
     "prettier": "^2.2.1",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
     "rimraf": "^3.0.2",
     "rollup": "^2.42.1",
     "rollup-plugin-typescript2": "^0.30.0",
@@ -75,12 +80,7 @@
     "@material-ui/core": "^4.11.3"
   },
   "dependencies": {
-    "@testing-library/jest-dom": "^5.11.9",
-    "@testing-library/react": "^11.2.5",
-    "@testing-library/user-event": "^13.0.6",
     "clsx": "^1.1.1",
-    "lodash": "^4.17.21",
-    "react": "^17.0.1",
-    "react-dom": "^17.0.1"
+    "lodash": "^4.17.21"
   }
 }

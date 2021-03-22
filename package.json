@@ -14,7 +14,7 @@
   "module": "dist/index.esm.js",
   "typings": "dist/index.d.ts",
   "repository": "git@github.com:nextglabs/material-ui-phone-field.git",
-  "homepage": "https://github.com/nextglabs/material-ui-phone-field",
+  "homepage": "http://nextglabs.github.io/material-ui-phone-field",
   "bugs": {
     "url": "https://github.com/nextglabs/material-ui-phone-field/issues"
   },
@@ -37,7 +37,10 @@
     "jest:cache": "jest --clearCache",
     "release:major": "changelog -M && git add CHANGELOG.md && git commit -m 'updated CHANGELOG.md' && yarn version --major && git push origin && git push origin --tags && yarn publish",
     "release:minor": "changelog -m && git add CHANGELOG.md && git commit -m 'updated CHANGELOG.md' && yarn version --minor && git push origin && git push origin --tags && yarn publish",
-    "release:patch": "changelog -p && git add CHANGELOG.md && git commit -m 'updated CHANGELOG.md' && yarn version --patch && git push origin && git push origin --tags && yarn publish"
+    "release:patch": "changelog -p && git add CHANGELOG.md && git commit -m 'updated CHANGELOG.md' && yarn version --patch && git push origin && git push origin --tags && yarn publish",
+    "deploy-storybook": "yarn build-storybook && gh-pages -d storybook-static",
+    "build-storybook": "build-storybook",
+    "storybook": "start-storybook -p 6006"
   },
   "browserslist": {
     "production": [
@@ -52,8 +55,13 @@
     ]
   },
   "devDependencies": {
+    "@babel/core": "^7.13.10",
     "@material-ui/core": "^4.11.3",
     "@rollup/plugin-strip": "^2.0.0",
+    "@storybook/addon-actions": "^6.1.21",
+    "@storybook/addon-essentials": "^6.1.21",
+    "@storybook/addon-links": "^6.1.21",
+    "@storybook/react": "^6.1.21",
     "@testing-library/jest-dom": "^5.11.9",
     "@testing-library/react": "^11.2.5",
     "@testing-library/user-event": "^13.0.7",
@@ -61,11 +69,13 @@
     "@types/react-dom": "^17.0.2",
     "@typescript-eslint/eslint-plugin": "^4.18.0",
     "@typescript-eslint/parser": "^4.18.0",
+    "babel-loader": "^8.2.2",
     "cross-env": "^7.0.3",
     "eslint": "^7.22.0",
     "eslint-config-prettier": "^8.1.0",
     "eslint-plugin-prettier": "^3.3.1",
     "generate-changelog": "^1.8.0",
+    "gh-pages": "^3.1.0",
     "jest": "^26.6.3",
     "prettier": "^2.2.1",
     "react": "^17.0.1",

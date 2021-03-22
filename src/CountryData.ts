@@ -19,7 +19,7 @@ export default class CountryData {
 	constructor(
 		enableAreaCodes: boolean | PartialCountries,
 		enableTerritories: boolean,
-		regions: Region[],
+		regions: Region | Region[] | null,
 		onlyCountries: PartialCountries,
 		preferredCountries: PartialCountries,
 		excludeCountries: PartialCountries,
@@ -74,12 +74,12 @@ export default class CountryData {
 				this.getFilteredCountryList(
 					onlyCountries,
 					initializedCountries,
-					preserveOrder.includes("onlyCountries"),
+					preserveOrder?.includes("onlyCountries"),
 				),
 				excludeCountries,
 			),
 			localization,
-			preserveOrder.includes("onlyCountries"),
+			preserveOrder?.includes("onlyCountries"),
 		);
 
 		this.preferredCountries =
@@ -89,10 +89,10 @@ export default class CountryData {
 						this.getFilteredCountryList(
 							preferredCountries,
 							initializedCountries,
-							preserveOrder.includes("preferredCountries"),
+							preserveOrder?.includes("preferredCountries"),
 						),
 						localization,
-						preserveOrder.includes("preferredCountries"),
+						preserveOrder?.includes("preferredCountries"),
 				  );
 
 		// apply filters to hiddenAreaCodes
@@ -102,7 +102,9 @@ export default class CountryData {
 		);
 	}
 
-	filterRegions = (regions: Region | Region[], countries: Country[]) => {
+	filterRegions = (regions: Region | Region[] | null, countries: Country[]) => {
+		if (!regions) return countries;
+
 		// Example: `regions={"europe"}`
 		if (typeof regions === "string") {
 			const region = regions;

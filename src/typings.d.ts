@@ -301,7 +301,7 @@ export type Country = {
 	regions: Region[];
 	dialCode: InternationalDialCode;
 	countryCode: string;
-	format: Format;
+	format: string;
 	priority: Priority;
 	mainCode?: boolean;
 	hasAreaCodes?: boolean;
@@ -318,24 +318,24 @@ export type PartialCountries = Iso2Code[];
 /** Priorities by Country, passed as Prop
  * example: priorities={{ ca: 0, us: 1, kz: 0, ru: 1 }}
  */
-export type Priorities = Record<Iso2Code, number>;
+export type Priorities = Partial<Record<Iso2Code, number>>;
 
 /**
  * Priorities by Country, passed as Prop
  * example: areaCodes={{ gr: ['2694', '2647'], fr: ['369', '463'], us: ['300']}}
  */
-export type AreaCodes = Record<Iso2Code, AreaCode[]>;
+export type AreaCodes = Partial<Record<Iso2Code, AreaCode[]>>;
 
 /**
  * Masks by Country, passed as Prop
  * example: masks={{fr: '(...) ..-..-..', at: '(....) ...-....'}}
  */
-export type Masks = Record<Iso2Code, Mask>;
+export type Masks = Partial<Record<Iso2Code, Mask>>;
 
 /** Localization object */
 export type Localization = Record<string, string>;
 
 type OrderKey = "onlyCountries" | "preferredCountries";
-export type PreserveOrder = [OrderKey, OrderKey];
+export type PreserveOrder = [OrderKey, OrderKey] | null;
 
 export type CustomSettings = [Iso2Code, Mask, AreaCode[], Priority];

@@ -1,10 +1,13 @@
+/* eslint-disable prettier/prettier */
+import { RawCountry } from "./typings";
+
 // Country model:
 // [
 //    Country name,
 //    Regions,
 //    iso2 code,
 //    International dial code,
-//    Format (if available),
+//    Mask (if available),
 //    Order priority (if >1 country with same dial code),
 //    Area codes (if >1 country with same dial code)
 // ]
@@ -15,8 +18,6 @@
 // Sub-regions:
 // ["north-america", "south-america", "central-america", "caribbean",
 //  "eu-union", "ex-ussr", "ex-yugos", "baltic", "middle-east", "north-africa"]
-
-import { RawCountry } from "./typings";
 
 const rawCountries: RawCountry[] = [
 	[

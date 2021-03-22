@@ -1,10 +1,13 @@
+/* eslint-disable prettier/prettier */
+import { RawCountry } from "./typings";
+
 // Country model:
 // [
 //    Country name,
 //    Regions,
 //    iso2 code,
 //    International dial code,
-//    Format (if available),
+//    Mask (if available),
 //    Order priority (if >1 country with same dial code),
 //    Area codes (if >1 country with same dial code)
 // ]
@@ -13,11 +16,10 @@
 // ["america", "europe", "asia", "oceania", "africa"]
 //
 // Sub-regions:
-// ["north-america", "south-america", "central-america", "carribean",
+// ["north-america", "south-america", "central-america", "caribbean",
 //  "eu-union", "ex-ussr", "ex-yugos", "baltic", "middle-east", "north-africa"]
 
-
-const rawTerritories = [
+const rawTerritories: RawCountry[] = [
 	[
 		"American Samoa",
 		["oceania"],
@@ -26,7 +28,7 @@ const rawTerritories = [
 	],
 	[
 		"Anguilla",
-		["america", "carribean"],
+		["america", "caribbean"],
 		"ai",
 		"1264",
 	],
@@ -38,13 +40,13 @@ const rawTerritories = [
 	],
 	[
 		"British Virgin Islands",
-		["america", "carribean"],
+		["america", "caribbean"],
 		"vg",
 		"1284",
 	],
 	[
 		"Cayman Islands",
-		["america", "carribean"],
+		["america", "caribbean"],
 		"ky",
 		"1345",
 	],
@@ -87,7 +89,7 @@ const rawTerritories = [
 	],
 	[
 		"Montserrat",
-		["america", "carribean"],
+		["america", "caribbean"],
 		"ms",
 		"1664",
 	],
@@ -111,7 +113,7 @@ const rawTerritories = [
 	],
 	[
 		"Saint Barthélemy",
-		["america", "carribean"],
+		["america", "caribbean"],
 		"bl",
 		"590",
 		"",
@@ -125,7 +127,7 @@ const rawTerritories = [
 	],
 	[
 		"Saint Martin",
-		["america", "carribean"],
+		["america", "caribbean"],
 		"mf",
 		"590",
 		"",
@@ -139,7 +141,7 @@ const rawTerritories = [
 	],
 	[
 		"Sint Maarten",
-		["america", "carribean"],
+		["america", "caribbean"],
 		"sx",
 		"1721",
 	],
@@ -151,13 +153,13 @@ const rawTerritories = [
 	],
 	[
 		"Turks and Caicos Islands",
-		["america", "carribean"],
+		["america", "caribbean"],
 		"tc",
 		"1649",
 	],
 	[
 		"U.S. Virgin Islands",
-		["america", "carribean"],
+		["america", "caribbean"],
 		"vi",
 		"1340",
 	],

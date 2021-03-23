@@ -17,20 +17,20 @@ export default class CountryData {
 	hiddenAreaCodes: Country[];
 
 	constructor(
-		enableAreaCodes: boolean | PartialCountries,
-		enableTerritories: boolean,
-		regions: Region | Region[] | null,
-		onlyCountries: PartialCountries,
-		preferredCountries: PartialCountries,
-		excludeCountries: PartialCountries,
-		preserveOrder: PreserveOrder,
-		masks: Masks,
-		priorities: Priorities,
-		areaCodes: AreaCodes,
-		localization: Localization,
-		prefix: string,
-		defaultMask: string,
-		alwaysDefaultMask: boolean,
+		enableAreaCodes: boolean | PartialCountries = false,
+		enableTerritories = false,
+		regions: Region | Region[] | null = null,
+		onlyCountries: PartialCountries = [],
+		preferredCountries: PartialCountries = [],
+		excludeCountries: PartialCountries = [],
+		preserveOrder: PreserveOrder = null,
+		masks: Masks | null = null,
+		priorities: Priorities | null = null,
+		areaCodes: AreaCodes | null = null,
+		localization: Localization = {},
+		prefix = "+",
+		defaultMask = "... ... ... ... ..",
+		alwaysDefaultMask = false,
 	) {
 		const userSettings = buildCustomSettings(masks, areaCodes, priorities);
 		const rawCountries = extendRawCountries(

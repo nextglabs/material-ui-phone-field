@@ -1,5 +1,3 @@
-import reduce from "lodash/reduce";
-import { PhoneFieldProps } from "..";
 import {
 	RawCountry,
 	Country,
@@ -137,9 +135,9 @@ export const initCountries = (
  * ]
  */
 export const buildCustomSettings = (
-	masks: Masks,
-	areaCodes: AreaCodes,
-	priorities: Priorities,
+	masks: Masks | null,
+	areaCodes: AreaCodes | null,
+	priorities: Priorities | null,
 ): CustomSettings[] => {
 	const allCountries = [
 		...new Set([
@@ -150,9 +148,9 @@ export const buildCustomSettings = (
 	];
 	return allCountries.map((country) => [
 		country,
-		masks[country as Iso2Code],
-		areaCodes[country as Iso2Code],
-		priorities[country as Iso2Code],
+		masks?.[country as Iso2Code],
+		areaCodes?.[country as Iso2Code],
+		priorities?.[country as Iso2Code],
 	]) as CustomSettings[];
 };
 
@@ -179,87 +177,5 @@ export const extendRawCountries = (countries: RawCountry[], userSettings: Custom
 	});
 };
 
-type FormatNumberOptions = Pick<
-	PhoneFieldProps,
-	"prefix" | "disableCountryCode" | "enableAreaCodeStretch" | "enableLongNumbers" | "autoFormat"
->;
-
-export const formatNumber = (
-	text: string,
-	country: AreaItem,
-	options: FormatNumberOptions,
-): string => {
-	if (!country) return text;
-
-	const { format } = country;
-	const {
-		prefix = "+",
-		disableCountryCode,
-		enableAreaCodeStretch,
-		enableLongNumbers,
-		autoFormat,
-	} = options;
-
-	let pattern;
-	if (disableCountryCode) {
-		pattern = format.split(" ");
-		pattern.shift();
-		pattern = pattern.join(" ");
-	} else {
-		if (enableAreaCodeStretch && country.isAreaCode) {
-			pattern = format.split(" ");
-			pattern[1] = pattern[1].replace(/\.+/, "".padEnd(country.areaCodeLength || 0, "."));
-			pattern = pattern.join(" ");
-		} else {
-			pattern = format;
-		}
-	}
-
-	if (!text || text.length === 0) {
-		return disableCountryCode ? "" : prefix;
-	}
-
-	// for all strings with length less than 3, just return it (1, 2 etc.)
-	// also return the same text if the selected country has no fixed format
-	if ((text && text.length < 2) || !pattern || !autoFormat) {
-		return disableCountryCode ? text : prefix + text;
-	}
-
-	const formattedObject = reduce(
-		pattern,
-		(acc, character) => {
-			if (acc.remainingText.length === 0) {
-				return acc;
-			}
-
-			if (character !== ".") {
-				return {
-					formattedText: acc.formattedText + character,
-					remainingText: acc.remainingText,
-				};
-			}
-
-			const [head, ...tail] = acc.remainingText;
-
-			return {
-				formattedText: acc.formattedText + head,
-				remainingText: tail,
-			};
-		},
-		{
-			formattedText: "",
-			remainingText: text.split(""),
-		},
-	);
-
-	let formattedNumber;
-	if (enableLongNumbers) {
-		formattedNumber = formattedObject.formattedText + formattedObject.remainingText.join("");
-	} else {
-		formattedNumber = formattedObject.formattedText;
-	}
-
-	// Always close brackets
-	if (formattedNumber.includes("(") && !formattedNumber.includes(")")) formattedNumber += ")";
-	return formattedNumber;
-};
+export const isCountry = (countryGuess: AreaItem | undefined): countryGuess is AreaItem =>
+	Boolean((countryGuess as AreaItem).dialCode);

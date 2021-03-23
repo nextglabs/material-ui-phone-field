@@ -14,7 +14,7 @@
   "module": "dist/index.esm.js",
   "typings": "dist/index.d.ts",
   "repository": "git@github.com:nextglabs/material-ui-phone-field.git",
-  "homepage": "http://nextglabs.github.io/material-ui-phone-field",
+  "homepage": "https://nextglabs.github.io/material-ui-phone-field/",
   "bugs": {
     "url": "https://github.com/nextglabs/material-ui-phone-field/issues"
   },

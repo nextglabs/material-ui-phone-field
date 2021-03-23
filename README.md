@@ -8,12 +8,14 @@ Project still in its early stage of development. Feel free to contribute.
 
 What needs to be done:
 
-[] Convert PhoneField Class into Functional Component
-[] Improve props/state (refactor if needed)
-[] Improve codebase
-[] Make components customizable (input adornment, dropdown... etc)
-[] Add unit/integration tests
-[] Deploy NPM Package
+- [] Convert PhoneField Class into Functional Component
+- [] Improve props/state (refactor if needed)
+- [] Improve codebase
+- [] Make components customizable (input adornment, dropdown... etc)
+- [] Add unit/integration tests
+- [] Deploy NPM package
+- [] Add documentation
+- [] Add CI/CD
 
 ## License
 

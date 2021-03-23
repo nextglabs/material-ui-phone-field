@@ -10,6 +10,7 @@ export interface DropdownItemProps {
 	itemRef: (instance: any) => void;
 	localization?: string;
 	native?: boolean;
+	selected?: boolean;
 }
 
 export const DropdownItem = (props: DropdownItemProps) => {
@@ -20,6 +21,7 @@ export const DropdownItem = (props: DropdownItemProps) => {
 		localization = null,
 		itemRef,
 		native = false,
+		selected = false,
 		...restProps
 	} = props;
 
@@ -43,6 +45,7 @@ export const DropdownItem = (props: DropdownItemProps) => {
 				className="country"
 				data-dial-code="1"
 				data-country-code={iso2}
+				selected={selected}
 				{...restProps}
 			>
 				<div className={`flag ${iso2} margin`} />

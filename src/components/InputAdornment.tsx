@@ -8,6 +8,8 @@ import { makeStyles } from "@material-ui/core/styles";
 import map from "lodash/map";
 
 import { DropdownItem } from "./Dropdown/Item";
+import { Country } from "../typings";
+
 const useStyles = makeStyles(
 	{
 		flagButton: {
@@ -52,6 +54,11 @@ export const InputAdornment = (props: any) => {
 	} = props;
 	const classes = useStyles(props);
 	const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
+
+	const handleItemClick = (country: Country, event: React.MouseEvent) => {
+		handleFlagItemClick && handleFlagItemClick(country, event);
+		setAnchorEl(null);
+	};
 	return (
 		<MuiInputAdornment className={classes.positionStart} position="start">
 			<Button
@@ -80,7 +87,7 @@ export const InputAdornment = (props: any) => {
 							}}
 							// selected={isSelected(country)}
 							// @ts-ignore FIXME:
-							onClick={() => handleFlagItemClick(country)}
+							onClick={(e) => handleItemClick(country, e)}
 							name={country.name}
 							iso2={country.iso2}
 							dialCode={country.dialCode}
@@ -98,7 +105,7 @@ export const InputAdornment = (props: any) => {
 						}}
 						// selected={isSelected(country)}
 						// @ts-ignore FIXME:
-						onClick={() => handleFlagItemClick(country)}
+						onClick={(e) => handleItemClick(country, e)}
 						name={country.name}
 						iso2={country.iso2}
 						dialCode={country.dialCode}

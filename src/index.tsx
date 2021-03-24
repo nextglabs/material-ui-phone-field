@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React from "react";
 import trim from "lodash/trim";
 import find from "lodash/find";
@@ -8,7 +7,7 @@ import debounce from "lodash/debounce";
 import memoize from "lodash/memoize";
 import reduce from "lodash/reduce";
 import startsWith from "lodash/startsWith";
-import clsx from "clsx";
+import isString from "lodash/isString";
 import { TextField, TextFieldProps } from "@material-ui/core";
 
 import CountryData from "./CountryData";
@@ -44,12 +43,7 @@ const keys = {
 };
 
 export interface PhoneInputEventsProps {
-	onChange?(
-		value: string,
-		data: Country | Record<string, unknown>,
-		event: React.ChangeEvent<HTMLInputElement>,
-		formattedValue: string,
-	): void;
+	onChange?(value: string, data: Country | Record<string, unknown>): void;
 	onFocus?(
 		event: React.FocusEvent<HTMLInputElement>,
 		data: Country | Record<string, unknown>,
@@ -196,6 +190,8 @@ export type PhoneFieldProps = TextFieldProps &
 		localization?: Localization;
 		/** Specifies custom masks for country codes, example: `masks={{fr: '(...) ..-..-..', at: '(....) ...-....'}}` */
 		masks?: Masks;
+		/** Enables Material UI's NativeSelect instead of regular Menu as a dropdown component */
+		native?: boolean;
 		/** Country codes to be included, ie: `onlyCountries={['cu','cw','kz']}` */
 		onlyCountries?: PartialCountries;
 		/** Country codes to be at the top of the dropdown list `preferredCountries={['cu','cw','kz']}` */
@@ -215,11 +211,6 @@ export type PhoneFieldProps = TextFieldProps &
 		 */
 		regions?: Region | Region[] | null;
 		/**
-		 * Renders string as a flag
-		 * @default ""
-		 */
-		renderStringAsFlag?: string;
-		/**
 		 * Text that should be displayed when no search results are found
 		 * @default "No entries to show"
 		 */
@@ -234,11 +225,6 @@ export type PhoneFieldProps = TextFieldProps &
 		 * @default open
 		 */
 		showDropdown?: boolean;
-		/**
-		 * Shows additional special label
-		 * @default "Phone"
-		 */
-		specialLabel?: string;
 	};
 
 export type PhoneFieldState = {
@@ -662,7 +648,7 @@ export class PhoneField extends React.Component<PhoneFieldProps, PhoneFieldState
 
 		if (value === prefix) {
 			// we should handle change when we delete the last digit
-			if (onChange) onChange("", this.getCountryData(), e, "");
+			if (onChange) onChange("", this.getCountryData());
 			return this.setState({ formattedNumber: "" });
 		}
 
@@ -746,12 +732,7 @@ export class PhoneField extends React.Component<PhoneFieldProps, PhoneFieldState
 				}
 
 				onChange &&
-					onChange(
-						formattedNumber.replace(/[^0-9]+/g, ""),
-						this.getCountryData(),
-						e,
-						formattedNumber,
-					);
+					onChange(formattedNumber.replace(/[^0-9]+/g, ""), this.getCountryData());
 			},
 		);
 	};
@@ -768,44 +749,45 @@ export class PhoneField extends React.Component<PhoneFieldProps, PhoneFieldState
 		e.currentTarget.setSelectionRange(0, len);
 	};
 
-	handleFlagItemClick = (country: Country, e: any) => {
-		const currentSelectedCountry = this.state.selectedCountry;
-		const newSelectedCountry = this.state.onlyCountries.find((o) => o == country);
-		if (!newSelectedCountry) return;
+	handleFlagItemClick = (country: Country | string) => {
+		const { formattedNumber, selectedCountry, onlyCountries } = this.state;
+		const { onChange } = this.props;
 
-		const unformattedNumber = this.state.formattedNumber
+		const currentSelectedCountry = selectedCountry;
+		const nextSelectedCountry = isString(country)
+			? (find(onlyCountries, (countryItem) => countryItem.iso2 === country) as Country)
+			: (find(onlyCountries, country) as Country);
+
+		const unformattedNumber = formattedNumber
 			.replace(" ", "")
 			.replace("(", "")
 			.replace(")", "")
 			.replace("-", "");
+
 		const newNumber =
 			unformattedNumber.length > 1
 				? unformattedNumber.replace(
 						currentSelectedCountry?.dialCode || "",
-						newSelectedCountry.dialCode,
+						nextSelectedCountry.dialCode,
 				  )
-				: newSelectedCountry.dialCode;
-		const formattedNumber = this.formatNumber(
+				: nextSelectedCountry.dialCode;
+
+		const newFormattedNumber = this.formatNumber(
 			newNumber.replace(/\D/g, ""),
-			newSelectedCountry?.format,
+			nextSelectedCountry?.format,
 		);
 
 		this.setState(
 			{
-				showDropdown: false,
-				selectedCountry: newSelectedCountry,
+				selectedCountry: nextSelectedCountry,
 				freezeSelection: true,
-				formattedNumber,
+				formattedNumber: newFormattedNumber,
 			},
 			() => {
 				this.cursorToEnd();
-				if (this.props.onChange)
-					this.props.onChange(
-						formattedNumber.replace(/[^0-9]+/g, ""),
-						this.getCountryData(),
-						e,
-						formattedNumber,
-					);
+				if (onChange) {
+					onChange(newFormattedNumber, this.getCountryData());
+				}
 			},
 		);
 	};
@@ -937,14 +919,12 @@ export class PhoneField extends React.Component<PhoneFieldProps, PhoneFieldState
 					this.handleFlagItemClick(
 						this.getSearchFilteredCountries()[this.state.highlightCountryIndex] ||
 							this.getSearchFilteredCountries()[0],
-						e,
 					);
 				} else {
 					this.handleFlagItemClick(
 						[...this.state.preferredCountries, ...this.state.onlyCountries][
 							this.state.highlightCountryIndex
 						],
-						e,
 					);
 				}
 				break;
@@ -980,6 +960,26 @@ export class PhoneField extends React.Component<PhoneFieldProps, PhoneFieldState
 	handleClickOutside = (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
 		if (this.dropdownRef && !this.dropdownContainerRef?.contains(e.currentTarget)) {
 			this.state.showDropdown && this.setState({ showDropdown: false });
+		}
+	};
+
+	handleRefInput = (ref: HTMLInputElement) => {
+		const { inputRef, InputProps } = this.props;
+
+		let refProp;
+
+		if (inputRef) {
+			refProp = inputRef;
+		} else if (InputProps && InputProps.ref) {
+			refProp = InputProps.ref;
+		}
+
+		if (refProp) {
+			if (typeof refProp === "function") {
+				refProp(ref);
+			} else {
+				this.inputRef = refProp.current;
+			}
 		}
 	};
 
@@ -1039,177 +1039,26 @@ export class PhoneField extends React.Component<PhoneFieldProps, PhoneFieldState
 		}
 	};
 
-	getCountryDropdownList = () => {
-		const { preferredCountries, highlightCountryIndex, showDropdown, searchValue } = this.state;
-		const { disableDropdown, prefix } = this.props;
-		const {
-			enableSearch,
-			searchNotFoundText,
-			disableSearchIcon,
-			searchClass,
-			searchStyle,
-			searchPlaceholderText,
-			autocompleteSearch,
-		} = this.props;
-
-		const searchedCountries = this.getSearchFilteredCountries();
-
-		const countryDropdownList = searchedCountries.map((country, index) => {
-			const highlight = highlightCountryIndex === index;
-			const itemClasses = clsx({
-				country: true,
-				preferred: country.iso2 === "us" || country.iso2 === "gb",
-				active: country.iso2 === "us",
-				highlight,
-			});
-
-			const inputFlagClasses = `flag ${country.iso2}`;
-
-			return (
-				<li
-					ref={(el) => (this.flags[`flag_no_${index}`] = el)}
-					key={`flag_no_${index}`}
-					data-flag-key={`flag_no_${index}`}
-					className={itemClasses}
-					data-dial-code="1"
-					tabIndex={disableDropdown ? -1 : 0}
-					data-country-code={country.iso2}
-					onClick={(e) => this.handleFlagItemClick(country, e)}
-					role="option"
-					{...(highlight ? { "aria-selected": true } : {})}
-				>
-					<div className={inputFlagClasses} />
-					<span className="country-name">{this.getDropdownCountryName(country)}</span>
-					<span className="dial-code">
-						{country.format
-							? this.formatNumber(country.dialCode, country.format)
-							: prefix + country.dialCode}
-					</span>
-				</li>
-			);
-		});
-
-		const dashedLi = <li key="dashes" className="divider" />;
-		// let's insert a dashed line in between preferred countries and the rest
-		preferredCountries.length > 0 &&
-			(!enableSearch || (enableSearch && !searchValue.trim())) &&
-			countryDropdownList.splice(preferredCountries.length, 0, dashedLi);
-
-		const dropDownClasses = clsx(this.props.dropdownClass, "country-list", {
-			hide: !showDropdown,
-		});
-
-		return (
-			<ul
-				ref={(el) => {
-					!enableSearch && el && el.focus();
-					return (this.dropdownRef = el);
-				}}
-				className={dropDownClasses}
-				style={this.props.dropdownStyle}
-				role="listbox"
-				tabIndex={0}
-			>
-				{enableSearch && (
-					<li className={clsx(searchClass, "search")}>
-						{!disableSearchIcon && (
-							<span
-								className={clsx({
-									"search-emoji": true,
-									[`${searchClass}-emoji`]: searchClass,
-								})}
-								role="img"
-								aria-label="Magnifying glass"
-							>
-								&#128270;
-							</span>
-						)}
-						<input
-							className={clsx({
-								"search-box": true,
-								[`${searchClass}-box`]: searchClass,
-							})}
-							style={searchStyle}
-							type="search"
-							placeholder={searchPlaceholderText}
-							autoFocus={true}
-							autoComplete={autocompleteSearch ? "on" : "off"}
-							value={searchValue}
-							onChange={this.handleSearchChange}
-						/>
-					</li>
-				)}
-				{countryDropdownList.length > 0 ? (
-					countryDropdownList
-				) : (
-					<li className="no-entries-message">
-						<span>{searchNotFoundText}</span>
-					</li>
-				)}
-			</ul>
-		);
-	};
-
 	render() {
-		const {
-			onlyCountries,
-			preferredCountries,
-			selectedCountry,
-			showDropdown,
-			formattedNumber,
-		} = this.state;
+		const { onlyCountries, preferredCountries, selectedCountry, formattedNumber } = this.state;
 		const {
 			disableDropdown,
-			renderStringAsFlag,
-			isValid,
-			defaultErrorMessage,
-			specialLabel,
+			native,
 			placeholder,
 			InputProps,
 			value,
 			...restProps
 		} = this.props;
 
-		let isValidValue, errorMessage;
-		if (typeof isValid === "boolean") {
-			isValidValue = isValid;
-		} else {
-			const isValidProcessed =
-				isValid &&
-				isValid(formattedNumber.replace(/\D/g, ""), selectedCountry, onlyCountries);
-			if (typeof isValidProcessed === "boolean") {
-				isValidValue = isValidProcessed;
-				if (isValidValue === false) errorMessage = defaultErrorMessage;
-			} else {
-				// typeof === 'string'
-				isValidValue = false;
-				errorMessage = isValidProcessed;
-			}
-		}
-
-		const containerClasses = clsx(this.props.containerClass, "react-tel-input");
-		const arrowClasses = clsx({ arrow: true, up: showDropdown });
-		const inputClasses = clsx(this.props.inputClass, "form-control", {
-			"invalid-number": !isValidValue,
-			open: showDropdown,
-		});
-
-		const selectedFlagClasses = clsx("selected-flag", {
-			open: showDropdown,
-		});
-		const flagViewClasses = clsx(this.props.buttonClass, "flag-dropdown", {
-			"invalid-number": !isValidValue,
-			open: showDropdown,
-		});
-
 		const dropdownProps = {
-			startAdornment: (
+			startAdornment: !disableDropdown && (
 				<InputAdornment
 					onlyCountries={onlyCountries}
 					preferredCountries={preferredCountries}
 					flags={this.flags}
 					handleFlagItemClick={this.handleFlagItemClick}
 					inputFlagClasses={`flag ${selectedCountry?.iso2}`}
+					native={native}
 				/>
 			),
 		};

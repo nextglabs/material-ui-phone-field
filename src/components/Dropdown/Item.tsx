@@ -25,21 +25,17 @@ export const DropdownItem = (props: DropdownItemProps) => {
 		...restProps
 	} = props;
 
-	if (native) {
-		return (
-			<option
-				className="country"
-				data-dial-code="1"
-				data-country-code={iso2}
-				value={iso2}
-				{...restProps}
-			>
-				{localization || name} {`+${dialCode}`}
-			</option>
-		);
-	}
-
-	return (
+	return native ? (
+		<option
+			className="country"
+			data-dial-code="1"
+			data-country-code={iso2}
+			value={iso2}
+			{...restProps}
+		>
+			{localization || name} {`+${dialCode}`}
+		</option>
+	) : (
 		<RootRef rootRef={(node) => itemRef(node)}>
 			<MenuItem
 				className="country"

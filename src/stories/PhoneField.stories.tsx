@@ -27,3 +27,10 @@ Outlined.args = {
 	label: "Outlined Input",
 	variant: "outlined",
 };
+
+export const OutlinedNative = Template.bind({});
+OutlinedNative.args = {
+	label: "Outlined Native Input",
+	variant: "outlined",
+	native: true,
+};

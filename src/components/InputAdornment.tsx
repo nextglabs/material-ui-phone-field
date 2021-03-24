@@ -9,6 +9,7 @@ import map from "lodash/map";
 
 import { DropdownItem } from "./Dropdown/Item";
 import { Country } from "../typings";
+import { PhoneFieldProps, PhoneFieldStyles } from "..";
 
 const useStyles = makeStyles(
 	{
@@ -41,7 +42,16 @@ const useStyles = makeStyles(
 	{ name: "MuiPhoneField" },
 );
 
-export const InputAdornment = (props: any) => {
+export type InputAdornmentProps = PhoneFieldStyles &
+	Pick<PhoneFieldProps, "enableSearch" | "localization"> & {
+		inputFlagClasses?: string;
+		flags: Record<string, HTMLElement | null>;
+		onlyCountries: Country[];
+		preferredCountries: Country[];
+		handleFlagItemClick: (country: Country, e: any) => void;
+	};
+
+export const InputAdornment = (props: InputAdornmentProps) => {
 	const {
 		dropdownClass,
 		flags = {},
@@ -59,6 +69,20 @@ export const InputAdornment = (props: any) => {
 		handleFlagItemClick && handleFlagItemClick(country, event);
 		setAnchorEl(null);
 	};
+
+	const commonDropdownItemProps = (country: Country, index: number) => ({
+		key: `preferred_${country.iso2}_${index}`,
+		name: country.name,
+		iso2: country.iso2,
+		dialCode: country.dialCode,
+		// selected: isSelected(country),
+		localization: localization && localization[country.name],
+		itemRef: (node: HTMLElement) => {
+			flags[`flag_no_${index}`] = node;
+		},
+		onClick: (event: React.MouseEvent) => handleItemClick(country, event),
+	});
+
 	return (
 		<MuiInputAdornment className={classes.positionStart} position="start">
 			<Button
@@ -78,39 +102,17 @@ export const InputAdornment = (props: any) => {
 				open={Boolean(anchorEl)}
 				onClose={() => setAnchorEl(null)}
 			>
-				{!!preferredCountries.length &&
-					map(preferredCountries, (country, index) => (
-						<DropdownItem
-							key={`preferred_${country.iso2}_${index}`}
-							itemRef={(node) => {
-								flags[`flag_no_${index}`] = node;
-							}}
-							// selected={isSelected(country)}
-							// @ts-ignore FIXME:
-							onClick={(e) => handleItemClick(country, e)}
-							name={country.name}
-							iso2={country.iso2}
-							dialCode={country.dialCode}
-							localization={localization && localization[country.name]}
-						/>
-					))}
-
-				{!!preferredCountries.length && <Divider />}
+				{!!preferredCountries.length && (
+					<>
+						{map(preferredCountries, (country, index) => (
+							<DropdownItem {...commonDropdownItemProps(country, index)} />
+						))}
+						<Divider />
+					</>
+				)}
 
 				{map(onlyCountries, (country, index) => (
-					<DropdownItem
-						key={`preferred_${country.iso2}_${index}`}
-						itemRef={(node) => {
-							flags[`flag_no_${index}`] = node;
-						}}
-						// selected={isSelected(country)}
-						// @ts-ignore FIXME:
-						onClick={(e) => handleItemClick(country, e)}
-						name={country.name}
-						iso2={country.iso2}
-						dialCode={country.dialCode}
-						localization={localization && localization[country.name]}
-					/>
+					<DropdownItem {...commonDropdownItemProps(country, index)} />
 				))}
 			</Menu>
 		</MuiInputAdornment>

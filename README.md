@@ -2,7 +2,23 @@
 
 Highly customizable typescript-based phone field component with auto-formatting built for Material UI. Based on `react-phone-input-2` package.
 
-## Early Stage
+## Getting Started
+
+To get started, clone the project and run
+
+```shell
+yarn install
+```
+
+Then, run Storybook
+
+```shell
+yarn storybook
+```
+
+Make changes to files and see those changes live in Storybook.
+
+## Contributing
 
 Project still in its early stage of development. Feel free to contribute.
 

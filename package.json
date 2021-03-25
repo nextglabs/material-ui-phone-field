@@ -1,6 +1,6 @@
 {
   "name": "material-ui-phone-field",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Highly customizable Typescript-ready Phone Input Field for Material UI.",
   "keywords": [
     "material-ui",
